@@ -13,7 +13,7 @@ const crosswordRouter = require('./routes/crosswords');
 // Instancia principal da aplicacao Express.
 const app = express();
 
-// Considera o proxy do Render ao identificar o IP da requisicao.
+// Considera o proxy da Vercel ao identificar o IP da requisicao.
 app.set('trust proxy', 1);
 // Le corpos JSON com tamanho maximo de 32 KB.
 app.use(express.json({ limit: '32kb' }));
@@ -28,7 +28,7 @@ app.use(rateLimit({
   message: { error: 'Muitas requisicoes. Tente novamente mais tarde.' },
 }));
 
-// Rota usada pelo Render e pelo cliente para verificar se o BFF esta ativo.
+// Rota usada pela Vercel e pelo cliente para verificar se o BFF esta ativo.
 app.get('/health', (_request, response) => {
   response.status(200).json({ status: 'ok' });
 });
@@ -48,7 +48,7 @@ app.use((error, _request, response, _next) => {
 
 // Inicia o servidor somente quando este arquivo e executado diretamente.
 if (require.main === module) {
-  // Usa a porta definida pelo Render ou 3000 no computador local.
+  // Usa a porta definida pelo ambiente ou 3000 no computador local.
   const port = process.env.PORT || 3000;
   app.listen(port, () => console.log(`BFF rodando na porta ${port}`));
 }

@@ -13,11 +13,25 @@ npm run dev
 
 O servidor inicia em `http://localhost:3000` por padrao. Para um dispositivo fisico React Native, use o endereco IP local da maquina em vez de `localhost`.
 
-## Deploy no Render
+## Deploy na Vercel
 
-O arquivo `render.yaml` configura o Web Service automaticamente. No painel do Render, escolha **New +** > **Blueprint** e selecione este repositorio. Nenhuma chave de API e necessaria.
+O arquivo `vercel.json` e a funcao `api/index.js` configuram o Express para rodar como uma funcao serverless. Na Vercel, importe este repositorio e mantenha o diretorio raiz como a pasta do projeto.
 
-O Render executara `npm ci`, iniciara a aplicacao com `npm start` e verificara a disponibilidade em `/health`. Nao envie o arquivo `.env` ao Git: ele e destinado somente ao desenvolvimento local.
+A Vercel instalara as dependencias usando o `package-lock.json`. Nenhuma chave de API e necessaria nesta versao local. Nao envie o arquivo `.env` ao Git: ele e destinado somente ao desenvolvimento local.
+
+Depois do deploy, a URL publica sera semelhante a:
+
+```text
+https://seu-projeto.vercel.app
+```
+
+Use estas rotas:
+
+```text
+GET  https://seu-projeto.vercel.app/health
+POST https://seu-projeto.vercel.app/crosswords/levels/1
+POST https://seu-projeto.vercel.app/crosswords/levels/1/validate
+```
 
 ## Endpoints
 
@@ -79,4 +93,4 @@ As coordenadas sao baseadas em zero, em uma grade de `12 x 12`. As dicas e respo
 npm test
 ```
 
-Cada nivel possui seis palavras conectadas em uma grade de `12 x 12`, com pistas e respostas em ingles. Para ampliar o conteudo, adicione novos registros ao catalogo em `src/services/crosswordService.js`.
+Cada nivel possui seis palavras conectadas em uma grade de `12 x 12`, com pistas e respostas em ingles. Para ampliar o conteudo, adicione novos registros ao catalogo em `src/services/crosswordService.js`. Para testar localmente, continue usando `npm start`; a Vercel usa `api/index.js` como entrada serverless.
