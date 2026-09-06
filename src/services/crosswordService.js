@@ -149,7 +149,8 @@ const PUZZLES = {
       ['SUCCESS', 'Achieving something you wanted to achieve.'],
     ],
   ],
-};
+}
+
 
 // Constroi seis entradas conectadas, usando a palavra principal horizontal como ancora.
 function createEntries(anchor, words) {
