@@ -7,7 +7,7 @@ const { generateCrossword, validateCrossword } = require('../services/crosswordS
 const router = express.Router();
 
 // Retorna a cruzadinha cadastrada para o nivel informado na URL.
-router.post('/levels/:level', (request, response, next) => {
+router.post(['/levels/:level', '/level/:level'], (request, response, next) => {
   // Converte o parametro de texto da URL em numero inteiro.
   const level = Number.parseInt(request.params.level, 10);
 
@@ -26,7 +26,7 @@ router.post('/levels/:level', (request, response, next) => {
 });
 
 // Confere as palavras digitadas pelo usuario no nivel solicitado.
-router.post('/levels/:level/validate', (request, response, next) => {
+router.post(['/levels/:level/validate', '/level/:level/validate'], (request, response, next) => {
   // Identifica o nivel que o usuario esta tentando concluir.
   const level = Number.parseInt(request.params.level, 10);
   // Le a lista de respostas enviada no corpo JSON da requisicao.
