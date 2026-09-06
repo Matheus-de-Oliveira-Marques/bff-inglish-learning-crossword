@@ -1,16 +1,156 @@
 // Catalogo local: nivel, titulo, tema, palavra horizontal, pista e palavras verticais.
 const PUZZLES = {
-  1: ['First Words', 'everyday objects', 'PENCIL', 'You use this to write or draw.', [['PEN', 'A tool that writes with ink.'], ['EEL', 'A long fish with a snake-like body.'], ['NINE', 'The number after eight.'], ['CUP', 'A small container for drinking.'], ['ICE', 'Frozen water.'], ['LION', 'A large wild cat.']]],
-  2: ['My Family', 'family and home', 'FAMILY', 'Parents, children, and close relatives.', [['FISH', 'An animal that lives in water.'], ['APRON', 'Clothing worn to protect your clothes while cooking.'], ['MOTHER', 'A female parent.'], ['MILK', 'A white drink from cows.'], ['LAMP', 'An electric light you can place on a table.'], ['YARN', 'Thick thread used for knitting.']]],
-  3: ['Animal World', 'animals and nature', 'ANIMALS', 'Living creatures that are not plants.', [['ANT', 'A small insect that lives in colonies.'], ['NEST', 'A bird builds this home for its eggs.'], ['IGUANA', 'A large lizard that lives in warm places.'], ['MOSS', 'A small green plant that grows in damp places.'], ['LAMB', 'A young sheep.'], ['SNAIL', 'A small animal that carries a shell.']]],
-  4: ['Weather Report', 'weather', 'WEATHER', 'Conditions outside, such as sun, rain, or wind.', [['WATER', 'The clear liquid that people drink.'], ['EAGLE', 'A large bird with strong wings.'], ['THUNDER', 'The loud sound heard during a storm.'], ['TOWEL', 'Cloth used to dry your body or hands.'], ['HAIL', 'Small balls of ice that fall from clouds.'], ['RAIN', 'Water that falls from clouds.']]],
-  5: ['Travel Time', 'travel and transport', 'TRAVEL', 'To go from one place to another.', [['TRAIN', 'A long vehicle that runs on rails.'], ['RIVER', 'A large natural stream of water.'], ['AIRPORT', 'A place where airplanes arrive and leave.'], ['VAN', 'A medium road vehicle for people or goods.'], ['ELEVATOR', 'A machine that carries people between floors.'], ['LUGGAGE', 'Bags and suitcases used for traveling.']]],
-  6: ['Culture Club', 'culture and learning', 'CULTURE', 'The ideas, customs, and arts of a group of people.', [['CURTAIN', 'Fabric that covers a window.'], ['UMBRELLA', 'You use this to stay dry in the rain.'], ['TURTLE', 'A reptile with a hard shell.'], ['TUBA', 'A large brass instrument with a deep sound.'], ['RULER', 'A tool for measuring and drawing straight lines.'], ['TULIP', 'A colorful flower with a cup-shaped bloom.']]],
-  7: ['Science Lab', 'science', 'SCIENCE', 'The study of the natural world through evidence.', [['SENSOR', 'A device that detects changes in its environment.'], ['CIRCUIT', 'A path that electricity follows.'], ['ISOTOPE', 'A form of an element with a different number of neutrons.'], ['NEUTRON', 'A particle in an atom with no electric charge.'], ['CELL', 'The smallest unit of living matter.'], ['ECLIPSE', 'An event when one object in space blocks another.']]],
-  8: ['Workplace Words', 'business and work', 'BUSINESS', 'Work that involves buying, selling, or providing services.', [['BUDGET', 'A plan for how to spend money.'], ['USAGE', 'The way something is used.'], ['INVOICE', 'A document asking for payment.'], ['NEGOTIATE', 'To discuss in order to reach an agreement.'], ['STRATEGY', 'A plan designed to achieve a goal.'], ['STAFF', 'The employees of an organization.']]],
-  9: ['Knowledge Quest', 'academic vocabulary', 'KNOWLEDGE', 'Information and understanding gained through learning.', [['KERNEL', 'The central part of a seed or a small piece of data.'], ['ORBIT', 'The path an object follows around a planet or star.'], ['WISDOM', 'The ability to make good decisions based on experience.'], ['LITERATURE', 'Written works, especially those with artistic value.'], ['EQUATION', 'A mathematical statement showing two values are equal.'], ['GENE', 'A unit of information passed from parents to children.']]],
-  10: ['The Challenge', 'advanced practice', 'CHALLENGE', 'A difficult task that tests your ability.', [['CHEMISTRY', 'The science of substances and how they change.'], ['HYPOTHESIS', 'An idea that can be tested through research.'], ['ALGORITHM', 'A set of steps for solving a problem.'], ['LINGUISTIC', 'Related to language or the study of language.'], ['NAVIGATE', 'To plan or direct the route of a journey.'], ['ETHICS', 'Principles that guide right and wrong behavior.']]],
-};
+  1: [
+    'First Words',
+    'basic everyday words',
+    'EVERYDAY',
+    'Simple words you see and use every day.',
+    [
+      ['BOOK', 'Something you read.'],
+      ['PHONE', 'A device you use to call and message people.'],
+      ['TABLE', 'Furniture with a flat surface.'],
+      ['CHAIR', 'Something you sit on.'],
+      ['DOOR', 'You open this to enter or leave a room.'],
+      ['WATER', 'The clear liquid people drink.'],
+    ],
+  ],
+
+  2: [
+    'My Home',
+    'home and household',
+    'HOME',
+    'Words for things you find around your home.',
+    [
+      ['ROOM', 'A space inside a house or apartment.'],
+      ['BED', 'A piece of furniture you sleep on.'],
+      ['LAMP', 'Something that gives light.'],
+      ['KITCHEN', 'The room where you prepare food.'],
+      ['WINDOW', 'An opening in a wall that lets in light.'],
+      ['TOWEL', 'Something you use to dry yourself.'],
+    ],
+  ],
+
+  3: [
+    'Food & Drinks',
+    'common food and drinks',
+    'FOOD',
+    'Words for food, drinks, and everyday meals.',
+    [
+      ['BREAD', 'Food made from flour and baked.'],
+      ['MILK', 'A white drink that comes from cows.'],
+      ['APPLE', 'A round fruit that can be red or green.'],
+      ['RICE', 'Small grains commonly eaten with meals.'],
+      ['COFFEE', 'A hot drink made from roasted beans.'],
+      ['CHEESE', 'Food made from milk.'],
+    ],
+  ],
+
+  4: [
+    'My Family',
+    'family and relationships',
+    'FAMILY',
+    'Words for people in your family and close relationships.',
+    [
+      ['MOTHER', 'Your female parent.'],
+      ['FATHER', 'Your male parent.'],
+      ['BROTHER', 'A boy or man who has the same parents as you.'],
+      ['SISTER', 'A girl or woman who has the same parents as you.'],
+      ['BABY', 'A very young child.'],
+      ['FRIEND', 'A person you like and trust.'],
+    ],
+  ],
+
+  5: [
+    'Around Town',
+    'places in a city',
+    'CITY',
+    'Words for places you visit in your everyday life.',
+    [
+      ['STORE', 'A place where you buy things.'],
+      ['SCHOOL', 'A place where people learn.'],
+      ['PARK', 'A public place with grass, trees, and open space.'],
+      ['BANK', 'A place where people keep and manage money.'],
+      ['HOTEL', 'A place where travelers can stay.'],
+      ['MARKET', 'A place where people buy food and other products.'],
+    ],
+  ],
+
+  6: [
+    'Getting Around',
+    'transport and travel',
+    'TRAVEL',
+    'Words for moving from one place to another.',
+    [
+      ['CAR', 'A vehicle used to travel on roads.'],
+      ['BUS', 'A large vehicle that carries passengers.'],
+      ['TRAIN', 'A vehicle that travels on railway tracks.'],
+      ['PLANE', 'A vehicle that flies through the air.'],
+      ['TAXI', 'A car you pay to take you somewhere.'],
+      ['TICKET', 'Something that allows you to travel or enter a place.'],
+    ],
+  ],
+
+  7: [
+    'Daily Life',
+    'common actions and routines',
+    'ROUTINE',
+    'Words for things you do during a normal day.',
+    [
+      ['WAKE', 'To stop sleeping.'],
+      ['EAT', 'To put food in your mouth and swallow it.'],
+      ['WORK', 'To do a job or activity.'],
+      ['WALK', 'To move by putting one foot in front of the other.'],
+      ['SLEEP', 'To rest with your eyes closed.'],
+      ['START', 'To begin doing something.'],
+    ],
+  ],
+
+  8: [
+    'Feelings',
+    'emotions and feelings',
+    'FEELINGS',
+    'Words for emotions and how people feel.',
+    [
+      ['HAPPY', 'Feeling good or pleased.'],
+      ['SAD', 'Feeling unhappy.'],
+      ['ANGRY', 'Feeling very upset or annoyed.'],
+      ['TIRED', 'Needing to rest or sleep.'],
+      ['EXCITED', 'Feeling very happy about something that will happen.'],
+      ['WORRIED', 'Feeling nervous about something.'],
+    ],
+  ],
+
+  9: [
+    'At Work',
+    'work and communication',
+    'WORK',
+    'Useful words for jobs, tasks, and communication.',
+    [
+      ['MEETING', 'A time when people come together to talk about something.'],
+      ['EMAIL', 'A message sent electronically.'],
+      ['TASK', 'A piece of work that needs to be done.'],
+      ['TEAM', 'A group of people working together.'],
+      ['PLAN', 'Something you decide to do in the future.'],
+      ['HELP', 'To make something easier for someone.'],
+    ],
+  ],
+
+  10: [
+    'Level Up',
+    'useful intermediate vocabulary',
+    'PROGRESS',
+    'Common words that help you express ideas more clearly.',
+    [
+      ['CHOICE', 'Something you decide between two or more options.'],
+      ['REASON', 'Something that explains why something happens.'],
+      ['CHANGE', 'To make something different.'],
+      ['IMPORTANT', 'Having great value or meaning.'],
+      ['PROBLEM', 'Something that needs to be solved.'],
+      ['SUCCESS', 'Achieving something you wanted to achieve.'],
+    ],
+  ],
+}
+
 
 // Constroi seis entradas conectadas, usando a palavra principal horizontal como ancora.
 function createEntries(anchor, words) {
