@@ -35,6 +35,8 @@ app.get('/health', (_request, response) => {
 
 // Registra as rotas com o prefixo /crosswords.
 app.use('/crosswords', crosswordRouter);
+// Mantem aliases curtos como /level/1 para clientes que usam esse contrato.
+app.use('/', crosswordRouter);
 
 // Trata JSON invalido e erros inesperados em uma unica resposta HTTP.
 app.use((error, _request, response, _next) => {

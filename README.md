@@ -39,7 +39,11 @@ POST https://seu-projeto.vercel.app/crosswords/levels/1/validate
 
 `POST /crosswords/levels/:level` retorna a cruzadinha cadastrada para um nivel de `1` a `10`. A requisicao nao precisa de corpo.
 
+Tambem existe o alias curto `POST /level/:level`, por exemplo `POST /level/1`.
+
 `POST /crosswords/levels/:level/validate` valida as palavras preenchidas. Envie as respostas que estao na grade:
+
+O alias curto equivalente e `POST /level/:level/validate`.
 
 ```json
 {
