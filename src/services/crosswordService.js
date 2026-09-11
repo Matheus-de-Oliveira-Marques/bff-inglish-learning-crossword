@@ -1,155 +1,29 @@
-// Catalogo local: nivel, titulo, tema, palavra horizontal, pista e palavras verticais.
-const PUZZLES = {
-  1: [
-    'First Words',
-    'basic everyday words',
-    'EVERYDAY',
-    'Simple words you see and use every day.',
-    [
-      ['BOOK', 'Something you read.'],
-      ['PHONE', 'A device you use to call and message people.'],
-      ['TABLE', 'Furniture with a flat surface.'],
-      ['CHAIR', 'Something you sit on.'],
-      ['DOOR', 'You open this to enter or leave a room.'],
-      ['WATER', 'The clear liquid people drink.'],
-    ],
-  ],
+// Cliente fino sobre o SDK do Gemini, usado para gerar dinamicamente o conteudo de cada nivel.
+const geminiClient = require('./geminiClient');
 
-  2: [
-    'My Home',
-    'home and household',
-    'HOMES',
-    'Words for things you find around your home.',
-    [
-      ['ROOM', 'A space inside a house or apartment.'],
-      ['BED', 'A piece of furniture you sleep on.'],
-      ['LAMP', 'Something that gives light.'],
-      ['KITCHEN', 'The room where you prepare food.'],
-      ['HOUSE', 'A building where people live.'],
-      ['TOWEL', 'Something you use to dry yourself.'],
-    ],
-  ],
+// Guarda em memoria o ultimo quebra-cabeca gerado por nivel, para a validacao usar as mesmas palavras.
+const puzzleCache = new Map();
+// Tempo que um nivel gerado permanece valido para ser respondido.
+const CACHE_TTL_MS = 30 * 60 * 1000;
+// Quantidade de palavras candidatas pedidas a IA para garantir cruzamentos suficientes.
+const CANDIDATE_WORD_COUNT = 10;
+// Numero de tentativas antes de desistir de gerar uma grade valida.
+const MAX_GENERATION_ATTEMPTS = 3;
 
-  3: [
-    'Food & Drinks',
-    'common food and drinks',
-    'FOODIE',
-    'Words for food, drinks, and everyday meals.',
-    [
-      ['BREAD', 'Food made from flour and baked.'],
-      ['MILK', 'A white drink that comes from cows.'],
-      ['APPLE', 'A round fruit that can be red or green.'],
-      ['OLIVE', 'A small fruit often used to make oil.'],
-      ['COFFEE', 'A hot drink made from roasted beans.'],
-      ['COFFEE', 'A hot drink made from roasted beans.'],
-    ],
-  ],
-
-  4: [
-    'My Family',
-    'family and relationships',
-    'FAMILY',
-    'Words for people in your family and close relationships.',
-    [
-      ['MOTHER', 'Your female parent.'],
-      ['FATHER', 'Your male parent.'],
-      ['BROTHER', 'A boy or man who has the same parents as you.'],
-      ['SISTER', 'A girl or woman who has the same parents as you.'],
-      ['BABY', 'A very young child.'],
-      ['LOYAL', 'Showing steady support for someone.'],
-    ],
-  ],
-
-  5: [
-    'Around Town',
-    'places in a city',
-    'CITIES',
-    'Words for places you visit in your everyday life.',
-    [
-      ['STORE', 'A place where you buy things.'],
-      ['HOTEL', 'A place where travelers can stay.'],
-      ['TRAIN', 'A vehicle that travels on railway tracks.'],
-      ['TICKET', 'Something that allows you to travel or enter a place.'],
-      ['ICE', 'Frozen water.'],
-    ],
-  ],
-
-  6: [
-    'Getting Around',
-    'transport and travel',
-    'TRAVEL',
-    'Words for moving from one place to another.',
-    [
-      ['CAR', 'A vehicle used to travel on roads.'],
-      ['VAN', 'A road vehicle used to carry people or goods.'],
-      ['TRUCK', 'A large road vehicle used to carry goods.'],
-      ['PLANE', 'A vehicle that flies through the air.'],
-      ['LUGGAGE', 'Bags and suitcases used for traveling.'],
-      ['TICKET', 'Something that allows you to travel or enter a place.'],
-    ],
-  ],
-
-  7: [
-    'Daily Life',
-    'common actions and routines',
-    'ROUTINE',
-    'Words for things you do during a normal day.',
-    [
-      ['WAKE', 'To stop sleeping.'],
-      ['EAT', 'To put food in your mouth and swallow it.'],
-      ['WORK', 'To do a job or activity.'],
-      ['WALK', 'To move by putting one foot in front of the other.'],
-      ['UNIT', 'A single thing or part of a larger group.'],
-      ['NINE', 'The number after eight.'],
-    ],
-  ],
-
-  8: [
-    'Feelings',
-    'emotions and feelings',
-    'FEELINGS',
-    'Words for emotions and how people feel.',
-    [
-      ['FINE', 'Feeling healthy or well.'],
-      ['SAD', 'Feeling unhappy.'],
-      ['ANGRY', 'Feeling very upset or annoyed.'],
-      ['TIRED', 'Needing to rest or sleep.'],
-      ['EXCITED', 'Feeling very happy about something that will happen.'],
-      ['LONELY', 'Feeling sad because you are alone.'],
-    ],
-  ],
-
-  9: [
-    'At Work',
-    'work and communication',
-    'WORKER',
-    'Useful words for jobs, tasks, and communication.',
-    [
-      ['WEEK', 'A period of seven days.'],
-      ['OFFICE', 'A place where people do professional work.'],
-      ['RULER', 'A tool for measuring and drawing straight lines.'],
-      ['KEY', 'A small object used to open a lock.'],
-      ['EMAIL', 'A message sent electronically.'],
-      ['REPORT', 'A document that gives information about something.'],
-    ],
-  ],
-
-  10: [
-    'Level Up',
-    'useful intermediate vocabulary',
-    'PROGRESS',
-    'Common words that help you express ideas more clearly.',
-    [
-      ['OFFER', 'Something that someone proposes or makes available.'],
-      ['REASON', 'Something that explains why something happens.'],
-      ['GOAL', 'Something you want to achieve.'],
-      ['IMPORTANT', 'Having great value or meaning.'],
-      ['PROBLEM', 'Something that needs to be solved.'],
-      ['SUCCESS', 'Achieving something you wanted to achieve.'],
-    ],
-  ],
+// Monta o pedido enviado a IA, escalando a dificuldade conforme o nivel.
+function buildPrompt(level) {
+  return [
+    'You are creating content for an English vocabulary crossword game for Portuguese-speaking learners.',
+    `Generate original crossword content for difficulty level ${level} (1 is beginner, higher numbers mean more advanced and longer vocabulary).`,
+    'Rules:',
+    '- Provide one main horizontal word ("anchorWord"): an English word using only letters A-Z, uppercase, no spaces or hyphens, plus an "anchorClue" written in English.',
+    `- Provide at least ${CANDIDATE_WORD_COUNT} candidate words in "words", each with an "answer" (English word, only letters A-Z, uppercase, no spaces) and a short English "clue".`,
+    '- Every candidate answer must share at least one letter with "anchorWord" so it can cross it in a crossword grid.',
+    '- All answers (anchorWord and every candidate) must be different from each other.',
+    '- Increase vocabulary difficulty and word length as the level number increases.',
+    '- Respond only with JSON matching the provided schema.',
+  ].join('\n');
 }
-
 
 // Constroi seis entradas conectadas, usando a palavra principal horizontal como ancora.
 function createEntries(anchor, words) {
@@ -174,29 +48,77 @@ function createEntries(anchor, words) {
     if (entries.length === 6) return entries;
   }
 
-  throw new Error('O catalogo local nao possui palavras suficientes para esta grade.');
-}
-
-// Retorna a cruzadinha completa de um nivel do catalogo local.
-function generateCrossword({ level }) {
-  // Busca a definicao do nivel pela chave numerica.
-  const puzzle = PUZZLES[level];
-  if (!puzzle) throw new Error('Nivel de cruzadinha nao encontrado.');
-
-  // Separa os dados compactos do catalogo e monta as entradas da grade.
-  const [title, topic, answer, clue, words] = puzzle;
-  return { level, title, topic, entries: createEntries([answer, clue], words) };
+  throw new Error('As palavras geradas pela IA nao possuem cruzamentos suficientes para esta grade.');
 }
 
 // Remove espacos e ignora diferenca entre maiusculas e minusculas na tentativa.
 function normalizeAnswer(answer) {
-  return answer.trim().toUpperCase();
+  return String(answer || '').trim().toUpperCase();
+}
+
+// Descarta candidatos invalidos ou repetidos antes de montar a grade.
+function sanitizeWords(words, alreadyUsed) {
+  const seen = new Set(alreadyUsed);
+  const sanitized = [];
+
+  for (const candidate of Array.isArray(words) ? words : []) {
+    const answer = normalizeAnswer(candidate?.answer);
+    const clue = String(candidate?.clue || '').trim();
+    // So aceita palavras compostas apenas por letras, com pista e ainda nao usadas.
+    if (!/^[A-Z]+$/.test(answer) || !clue || seen.has(answer)) continue;
+
+    seen.add(answer);
+    sanitized.push([answer, clue]);
+  }
+
+  return sanitized;
+}
+
+// Pede a IA um novo quebra-cabeca e valida o formato antes de montar a grade.
+async function buildPuzzleFromGemini(level) {
+  const puzzle = await geminiClient.requestPuzzle(buildPrompt(level));
+
+  const anchorWord = normalizeAnswer(puzzle?.anchorWord);
+  const anchorClue = String(puzzle?.anchorClue || '').trim();
+  if (!/^[A-Z]+$/.test(anchorWord) || !anchorClue) {
+    throw new Error('A IA retornou uma palavra principal invalida.');
+  }
+
+  const words = sanitizeWords(puzzle?.words, [anchorWord]);
+  const entries = createEntries([anchorWord, anchorClue], words);
+
+  return {
+    level,
+    title: String(puzzle?.title || '').trim() || `Level ${level}`,
+    topic: String(puzzle?.topic || '').trim(),
+    entries,
+  };
+}
+
+// Gera a cruzadinha de um nivel via Gemini, tentando novamente em caso de resposta invalida.
+async function generateCrossword({ level }) {
+  // Reaproveita o quebra-cabeca ja gerado para que a validacao use as mesmas palavras.
+  const cached = puzzleCache.get(level);
+  if (cached && cached.expiresAt > Date.now()) return cached.crossword;
+
+  let lastError;
+  for (let attempt = 1; attempt <= MAX_GENERATION_ATTEMPTS; attempt += 1) {
+    try {
+      const crossword = await buildPuzzleFromGemini(level);
+      puzzleCache.set(level, { crossword, expiresAt: Date.now() + CACHE_TTL_MS });
+      return crossword;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  throw new Error(`Nao foi possivel gerar a cruzadinha do nivel ${level}: ${lastError?.message || 'erro desconhecido'}`);
 }
 
 // Compara todas as tentativas enviadas pelo usuario com as respostas oficiais.
-function validateCrossword({ level, answers }) {
-  // Obtem as respostas corretas para o nivel solicitado.
-  const crossword = generateCrossword({ level });
+async function validateCrossword({ level, answers }) {
+  // Obtem as respostas corretas para o nivel solicitado (usa o cache quando disponivel).
+  const crossword = await generateCrossword({ level });
   // Permite localizar rapidamente a tentativa pelo id de cada palavra.
   const answersByEntryId = new Map(answers.map((answer) => [answer.entryId, answer.answer]));
   // Gera o resultado individual de cada entrada da cruzadinha.

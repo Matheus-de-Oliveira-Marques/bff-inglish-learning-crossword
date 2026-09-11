@@ -1,7 +1,7 @@
 // Carrega variaveis do arquivo .env no ambiente de desenvolvimento.
 require('dotenv').config();
 
-// Libera requisições do aplicativo React Native em outras origens.
+// Libera requisições do aplicativo React em outras origens.
 const cors = require('cors');
 // Framework que cria o servidor e as rotas HTTP.
 const express = require('express');
